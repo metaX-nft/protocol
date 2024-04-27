@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract MechPet is ERC721URIStorage {
-    constructor() ERC721("metaX Pet", "xPet") {}
+    constructor() ERC721("metaX Pet", ".Pet") {}
     //tokenId => tokenUrr
     mapping(uint256 => string) tokenUris;
     //tokenId => lv
@@ -13,12 +13,16 @@ contract MechPet is ERC721URIStorage {
     mapping(uint256 => uint256) exps;
     //tokenId => point
     mapping(uint256 => uint256) points;
+    //user => tokenID
+    mapping(address => uint256) tokenIds ;
     //external expEntry mapping
     LvEntry[] entrys;
     //exp => lv mapping cache
     mapping(uint256 => LvEntry) extrysCached;
     //init uri
     string private initUri;
+    //tokenid
+    uint private tokenId;
 
     struct LvEntry {
         uint256 up;
@@ -34,10 +38,19 @@ contract MechPet is ERC721URIStorage {
         return tokenUris[tokenId];
     }
 
-    function feedPet(uint tokenId, uint256 amount) external {
-        require(tokenId > 1, "MechPet:not mint");
-        exps[tokenId] += amount;
-        _findLv(exps[tokenId], tokenId);
+    function feedPet(uint256 amount) external {
+        require(tokenIds[msg.sender] > 0, "MechPet:not claim");
+        uint256 tokenId = tokenIds[msg.sender];
+        uint256 expUpdated = exps[tokenId] + amount;
+        exps[tokenId] = expUpdated;
+        lvs[tokenId] = _findLv(expUpdated, tokenId);
+    }
+
+    function claimFreePet() external {
+        require(tokenIds[msg.sender] == 0, "MechPet:already claim");
+        tokenId++;
+        tokenIds[msg.sender] = tokenId;
+        _mint(msg.sender, tokenId);
     }
 
     function readPetMapping(
@@ -91,4 +104,26 @@ contract MechPet is ERC721URIStorage {
         extrysCached[exp] = entrys[i];
         return lvs[tokenId];
     }
+
+    function getLv() external view returns (uint256) {
+        uint256 tokenId = _getTokenId();
+        return lvs[tokenId];
+    }
+
+    function getExp() external view returns (uint256) {
+        uint256 tokenId = _getTokenId();
+        return exps[tokenId];
+    }
+
+    function getPoint() external view returns (uint256) {
+        uint256 tokenId = _getTokenId();
+        return points[tokenId];
+    }
+
+    function _getTokenId() internal returns (uint256) {
+        require(tokenIds[msg.sender] > 0, "MechPet:not claim");
+        return tokenIds[msg.sender];
+    }
+
+
 }
