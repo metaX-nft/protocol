@@ -14,7 +14,10 @@ contract MechPet is ERC721URIStorage {
     mapping(uint256 => PetEntry) private extrysCached;
     //address => tokenId
     mapping(address => uint256) private petIdOf;
-    string private initUri = "ipfs://QmUgyvKXQvyDUkSnA63dMRRc5j4bbC8WsSy2ftzQpytL2A";
+    string private initUri =
+        "ipfs://QmUgyvKXQvyDUkSnA63dMRRc5j4bbC8WsSy2ftzQpytL2A";
+    string private changUrl =
+        "ipfs://QmUQwF3tZ11HhnhFJaALyxR1MbMYWvwkTedrWYhknkSEAQ";
     uint256 private initLv;
     uint256 private petId = 1;
 
@@ -38,16 +41,6 @@ contract MechPet is ERC721URIStorage {
     event ReadPetMapping(uint256 indexed len);
     event GrowPet(uint256 indexed tokenId, uint256 indexed amount);
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view virtual override returns (string memory) {
-        require(tokenId >= 1, "MechPet:not mint");
-        string memory uri = datas[tokenId].uri;
-        bytes memory bytesUri = bytes(uri);
-        //when uri is empty, return initUri
-        return bytesUri.length == 0 ? initUri : uri;
-    }
-
     function claimFreePet(address to) external {
         require(petIdOf[to] == 0, "MechPet:already claimed");
         _claim(to);
@@ -58,6 +51,7 @@ contract MechPet is ERC721URIStorage {
         petIdOf[to] = petId;
         datas[petId].uri = initUri;
         datas[petId].lv = initLv;
+        _setTokenURI(petId, initUri);
         petId++;
     }
 
@@ -65,7 +59,9 @@ contract MechPet is ERC721URIStorage {
         require(tokenId >= 1, "MechPet:not mint");
         datas[tokenId].exp += amount;
         emit FeedPet(tokenId, amount);
-        _findLv(datas[tokenId].exp, tokenId);
+        // _findLv(datas[tokenId].exp, tokenId);
+        datas[tokenId].uri = changUrl;
+        _setTokenURI(tokenId, changUrl);
     }
 
     function growPet(uint tokenId, uint256 amount) external {
