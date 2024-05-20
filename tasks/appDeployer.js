@@ -76,16 +76,8 @@ task("metaX:appDeployer", "deploy contract of metaX application ").setAction(
       expStake.target,
       hre.ethers.parseUnits("1000000000000000", 18)
     );
-
-    const symbol = await metaXToken.symbol();
-    const name = await metaXToken.name();
-    const decimals = (await metaXToken.decimals()).toString();
-
     const json = {
       network: network,
-      name: name,
-      symbol: symbol,
-      decimals: decimals,
       addresses: {
         metaXToken: metaXToken.target,
         mechPet: mechPet.target,
@@ -96,7 +88,7 @@ task("metaX:appDeployer", "deploy contract of metaX application ").setAction(
       },
     };
 
-    toJson(PATHS.ADDRESS, json, `metaX-nft.${network}.json`);
+    toJson(PATHS.ADDRESS, json, `metaX-nft-testnet.${network}.json`);
   }
 );
 

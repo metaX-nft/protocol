@@ -1,0 +1,11 @@
+{
+  "network": "sepolia",
+  "addresses": {
+    "metaXToken": "0xcD817028672bF61C83FDEE75F783Ce10B30b31A1",
+    "mechPet": "0xe8689ae50d9f23a611469c0E7F5caB8596070b0a",
+    "chainlinkRaffle": "0x33f28cAC4D2Aa755e9E67d7c6C64164F93103A0e",
+    "luckyPick": "0x217fd65E6a836b6Fa05DC45D7e18774c5ce2e9c8",
+    "expStake": "0x047C72410237542804836616a11eeee14eAD526d",
+    "priceFeed": "0x3DfCC4ae74FBB00140b2534720A9a310B27768D9"
+  }
+}
