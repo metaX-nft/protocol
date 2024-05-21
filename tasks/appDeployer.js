@@ -1,7 +1,7 @@
 const { PATHS, toJson, fromJson } = require("../util/files");
 const prompt = require("prompt-sync")();
 
-task("metaX:appDeployer", "deploy contract of metaX application ").setAction(
+task("metaX:deploy", "deploy all contracts of metaX application  ").setAction(
   async (taskArgs, hre) => {
     const network = hre.network.name;
     const [deployer] = await hre.ethers.getSigners();
@@ -27,6 +27,8 @@ task("metaX:appDeployer", "deploy contract of metaX application ").setAction(
       deployer
     );
     const metaXToken = await MetaXToken.deploy();
+    //mint xToken to deployer
+    metaXToken.mint(deployer.address, hre.ethers.parseUnits("100000000", 18))
 
     //deploy NFT
     const MechPet = await hre.ethers.getContractFactory("MechPet", deployer);
@@ -71,7 +73,7 @@ task("metaX:appDeployer", "deploy contract of metaX application ").setAction(
       priceFeed.target
     );
 
-    //mint metaX token
+    //mint metaX token to expStake
     await metaXToken.mint(
       expStake.target,
       hre.ethers.parseUnits("1000000000000000", 18)
@@ -88,7 +90,7 @@ task("metaX:appDeployer", "deploy contract of metaX application ").setAction(
       },
     };
 
-    toJson(PATHS.ADDRESS, json, `metaX-nft-testnet.${network}.json`);
+    toJson(PATHS.ADDRESS, json, `metaX.${network}.json`);
   }
 );
 
